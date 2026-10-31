@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5eddf">
+<title>同词相见 · 1 对 1</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    min-height:100dvh;
+    background:
+      radial-gradient(1100px 520px at 8% -8%, #fff7e9 0%, rgba(255,247,233,0) 62%),
+      radial-gradient(900px 520px at 108% 108%, #f7e6cf 0%, rgba(247,230,207,0) 58%),
+      #f5eddf;
+    color:#2a2521;
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    display:flex;justify-content:center;
+    padding:26px 16px 44px;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .shell{width:100%;max-width:520px}
+  .hidden{display:none !important}
+  .card{
+    background:#fffdf8;
+    border:1px solid #e7dcc8;
+    border-radius:22px;
+    box-shadow:0 14px 36px rgba(94,72,40,.09), 0 1px 0 rgba(255,255,255,.8) inset;
+    padding:24px 22px;
+  }
+  .kicker{
+    font-size:12px;letter-spacing:.22em;color:#a8987f;text-transform:uppercase;
+  }
+  .brand{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:42px;line-height:1.15;letter-spacing:.12em;
+    margin:10px 0 12px;font-weight:600;
+  }
+  .lede{margin:0 0 22px;color:#6f6558;font-size:15px}
+  .gate .field{margin-bottom:16px}
+  label{display:block;font-size:13px;color:#8b8072;margin-bottom:6px;letter-spacing:.05em}
+  input[type=text]{
+    width:100%;border:1px solid #e4d8c3;background:#fffefa;color:#2a2521;
+    border-radius:14px;padding:13px 14px;font-size:17px;outline:none;
+    transition:border-color .15s, box-shadow .15s;
+    font-family:inherit;
+  }
+  input[type=text]::placeholder{color:#bcb0a0}
+  input[type=text]:focus{border-color:#c9b48d;box-shadow:0 0 0 4px rgba(201,180,141,.18)}
+  .codeRow{display:flex;gap:8px}
+  .codeRow input{flex:1;min-width:0;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+  .hint{margin:8px 0 0;font-size:13px;color:#a2947f;line-height:1.55}
+  .hint.hot{color:#c4442f}
+  .tiny{font-size:12px;color:#b3a692;margin-top:12px}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  .primary{
+    width:100%;background:#2a2521;color:#fdf7ea;border-radius:15px;
+    padding:15px 18px;font-size:17px;letter-spacing:.08em;margin-top:6px;
+    transition:transform .08s ease, background .15s;
+  }
+  .primary:hover{background:#3a332c}
+  .primary:active{transform:scale(.985)}
+  .primary:disabled{opacity:.5}
+  .ghostBtn{
+    border:1px solid #e4d8c3;background:#fffefa;color:#6f6558;
+    border-radius:14px;padding:12px 16px;font-size:15px;white-space:nowrap;
+  }
+  .ghostBtn:hover{border-color:#cdbb9c}
+  .mini{
+    border:1px solid rgba(196,68,47,.35);color:#c4442f;border-radius:10px;
+    padding:4px 10px;font-size:13px;background:#fff;
+  }
+  .rules{margin-top:18px;border-top:1px dashed #e7dcc8;padding-top:14px}
+  .rules summary{cursor:pointer;font-size:14px;color:#8b8072;outline:none}
+  .rules ol{margin:10px 0 0;padding-left:20px;color:#6f6558;font-size:14px}
+  .rules li{margin:6px 0}
+
+  /* ---------- 房间 ---------- */
+  .top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+  .chips{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .chip{
+    font-size:13px;letter-spacing:.06em;color:#5c5347;
+    background:#fffdf8;border:1px solid #e7dcc8;border-radius:999px;padding:4px 12px;
+  }
+  .chip.ghost{color:#b3a692;background:transparent;border-style:dashed}
+  .roundBox{text-align:center;line-height:1;padding-bottom:2px}
+  .rnum{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:38px;font-weight:600;color:#2a2521;
+  }
+  .rlab{font-size:12px;color:#a8987f;letter-spacing:.2em;margin-top:4px}
+
+  .banner{
+    display:flex;align-items:center;gap:10px;justify-content:space-between;
+    background:#fdf1e4;border:1px solid #edc9a6;color:#a8542c;
+    border-radius:14px;padding:10px 12px;font-size:13px;margin-bottom:12px;
+  }
+
+  .stage{min-height:300px;display:flex;flex-direction:column;justify-content:center}
+  .view{display:none;width:100%}
+  .view.on{display:block;animation:pop .22s ease}
+
+  .waitTitle{font-size:15px;color:#8b8072;letter-spacing:.08em}
+  .bigCode{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:44px;letter-spacing:.28em;margin:6px 0 4px;color:#2a2521;
+    padding-left:.28em;
+  }
+
+  .qline{font-size:15px;color:#8b8072;margin-bottom:14px}
+  .qline b{color:#2a2521;font-size:17px}
+
+  .timer{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .tbar{flex:1;height:6px;border-radius:999px;background:#efe6d6;overflow:hidden}
+  .tbar i{display:block;height:100%;width:100%;border-radius:999px;background:#c9a86a;
+    transition:width .18s linear, background .3s}
+  .tbar i.warn{background:#c4442f}
+  .tnum{font-size:12px;color:#a2947f;min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
+  .tnum b{font-size:17px;color:#2a2521;margin-right:2px}
+  .tnum.warn b{color:#c4442f}
+  .hint.center{text-align:center;margin-top:12px}
+  .wordInput{font-size:19px !important;padding:15px 14px !important;text-align:center}
+  #sendBtn{margin-top:12px}
+
+  .myWord{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:34px;text-align:center;margin:14px 0 18px;word-break:break-word;
+  }
+  .waiting{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    color:#a2947f;font-size:14px;letter-spacing:.06em;
+  }
+  .pulse{
+    width:8px;height:8px;border-radius:50%;background:#c9a86a;
+    animation:pulse 1.4s infinite ease-in-out;
+  }
+  @keyframes pulse{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .verdict{
+    text-align:center;font-size:14px;letter-spacing:.3em;margin-bottom:16px;
+  }
+  .verdict.miss{color:#a2947f}
+  .verdict.hit{color:#2f6b4f;letter-spacing:.2em;font-size:15px}
+  .pair{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:22px}
+  .side{flex:1;min-width:0;text-align:center}
+  .who{font-size:12px;letter-spacing:.18em;color:#a8987f;margin-bottom:8px}
+  .side .w{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:clamp(24px,7vw,34px);line-height:1.3;word-break:break-word;
+  }
+  .side .wn{font-size:12px;color:#b3a692;margin-top:6px;word-break:break-all}
+  .cross{color:#d3c4ad;font-size:20px;padding-top:26px}
+
+  .endWord{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:clamp(38px,12vw,52px);text-align:center;color:#2f6b4f;
+    letter-spacing:.06em;margin:6px 0 6px;animation:hitIn .5s cubic-bezier(.2,1.4,.4,1);
+    word-break:break-word;
+  }
+  @keyframes hitIn{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+  .endMeta{text-align:center;color:#8b8072;font-size:14px;margin-bottom:20px}
+  .endMeta b{color:#2a2521;font-size:17px}
+  #endNorm{text-align:center;font-size:13px;color:#b3a692;margin:-12px 0 16px}
+  .endActs{display:flex;flex-direction:column;gap:10px}
+  .row2{display:flex;gap:10px}
+  .row2 .ghostBtn{flex:1;padding:12px 6px;font-size:14px}
+
+  .cardWrap{
+    position:fixed;inset:0;background:rgba(42,37,33,.55);z-index:60;
+    display:flex;align-items:center;justify-content:center;padding:18px;
+  }
+  .cardBox{
+    background:#fffdf8;border-radius:20px;padding:14px;width:100%;max-width:430px;
+    text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.28);
+  }
+  .cardBox img{width:100%;height:auto;border-radius:12px;display:block}
+  .cardBox .hint{margin:12px 0}
+  .cardBox .ghostBtn{width:100%}
+
+  .histWrap{margin-top:14px;padding:18px 20px}
+  .histTitle{font-size:12px;letter-spacing:.22em;color:#a8987f;margin-bottom:8px}
+  .history{list-style:none;margin:0;padding:0}
+  .histHead{
+    display:grid;grid-template-columns:58px 1fr 1fr 22px;gap:8px;
+    font-size:11px;color:#c2b5a1;letter-spacing:.12em;
+    padding:0 0 6px;border-bottom:1px solid #f2e9da;
+  }
+  .history li{
+    display:grid;grid-template-columns:58px 1fr 1fr 22px;
+    gap:8px;align-items:baseline;padding:7px 0;border-top:1px solid #f2e9da;font-size:15px;
+  }
+  .history li:first-child{border-top:none}
+  .hn{font-size:12px;color:#b3a692;letter-spacing:.06em}
+  .hw{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hm{color:#c6b7a1;text-align:right;font-size:13px}
+  .history li.hit .hm{color:#2f6b4f}
+  .history li.hit .hw{color:#2f6b4f}
+
+  .foot{
+    display:flex;align-items:center;gap:8px;justify-content:center;
+    margin-top:18px;font-size:13px;color:#b3a692;flex-wrap:wrap;
+  }
+  .link{color:#8b8072;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+  .link:hover{color:#2a2521}
+  .sep{color:#d8cab4}
+  .syncNote{font-size:12px;color:#b3a692}
+  .syncNote.warn{color:#b98432}
+  .syncNote.bad{color:#c4442f}
+
+  .modal{
+    position:fixed;inset:0;background:rgba(42,37,33,.42);
+    display:flex;align-items:center;justify-content:center;padding:20px;z-index:50;
+  }
+  .modalCard{
+    background:#fffdf8;border-radius:20px;padding:24px 22px;max-width:420px;width:100%;
+    box-shadow:0 24px 60px rgba(0,0,0,.2);
+  }
+  .modalCard h3{
+    font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:24px;margin:8px 0 12px;letter-spacing:.06em;
+  }
+  .modalCard ol{padding-left:20px;color:#5c5347;font-size:14px;margin:0 0 18px}
+  .modalCard li{margin:8px 0}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+    background:#2a2521;color:#fdf7ea;padding:10px 18px;border-radius:999px;
+    font-size:14px;opacity:0;pointer-events:none;transition:.22s ease;z-index:60;
+    max-width:88vw;text-align:center;
+  }
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ================= 入口 ================= -->
+  <section id="gate" class="card gate">
+    <div class="kicker">1 对 1 · 默契小游戏</div>
+    <h1 class="brand">同词相见</h1>
+    <p class="lede">你和屏幕那头的人，各自说一个词。<br>撞上了，这一局就结束。</p>
+
+    <div class="field">
+      <label for="nameInput">你的名字</label>
+      <input id="nameInput" type="text" maxlength="10" placeholder="随便叫什么都行" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label for="codeInput">房间口令</label>
+      <div class="codeRow">
+        <input id="codeInput" type="text" maxlength="8" placeholder="和对方约好同一个" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        <button id="randBtn" class="ghostBtn" type="button">随机</button>
+      </div>
+      <p class="hint">两个人在两台设备上输入同一个口令，就进同一个房间。</p>
+    </div>
+
+    <button id="enterBtn" class="primary" type="button">进房间</button>
+
+    <details class="rules">
+      <summary>怎么玩</summary>
+      <ol>
+        <li>每一轮 30 秒，写一个词或一句话，点「说出来」。</li>
+        <li>30 秒一到，打字框里的内容会直接发出去；空着就当作没写。</li>
+        <li>两个人都说完才一起揭晓。去掉标点和空格后一模一样，就算「同词相见」，这一局结束。</li>
+        <li>没撞上时，两边都点「继续」，下一轮的 30 秒才开始。</li>
+      </ol>
+      <p class="tiny">这个词句会经过公共消息服务（ntfy）中转，别写隐私内容。</p>
+    </details>
+  </section>
+
+  <!-- ================= 房间 ================= -->
+  <section id="room" class="hidden">
+    <header class="top">
+      <div>
+        <div class="kicker">同词相见</div>
+        <div class="chips">
+          <span id="roomChip" class="chip">房间</span>
+          <span id="peerChip" class="chip ghost">等待对方</span>
+        </div>
+      </div>
+      <div class="roundBox">
+        <div class="rnum" id="roundNum">1</div>
+        <div class="rlab">轮</div>
+      </div>
+    </header>
+
+    <div id="banner" class="banner hidden">
+      <span id="bannerText"></span>
+      <button id="altHost" class="mini hidden" type="button">换个服务器</button>
+    </div>
+
+    <main class="card stage">
+      <div id="v-wait" class="view">
+        <div class="waitTitle">等对方进来</div>
+        <div class="bigCode" id="waitCode">——</div>
+        <p class="hint">把这个口令发给对方，让他在自己设备上打开同一个网页，输入同一个口令。</p>
+        <button class="primary" id="copyInvite" type="button">复制邀请</button>
+      </div>
+
+      <div id="v-input" class="view">
+        <div class="timer">
+          <div class="tbar"><i id="tFill"></i></div>
+          <div class="tnum"><b id="tLeft">30</b>秒</div>
+        </div>
+        <div class="qline">第 <b id="iRound">1</b> 轮 · 你想说什么</div>
+        <input id="wordInput" class="wordInput" type="text" maxlength="40" placeholder="一个词，或一句话" enterkeyhint="send" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="primary" id="sendBtn" type="button">说出来</button>
+        <p class="hint">标点、空格不影响比较；时间到就把框里的内容直接发出去。</p>
+        <p class="hint hot hidden" id="peerHint">对方已经说了，就差你。</p>
+      </div>
+
+      <div id="v-sent" class="view">
+        <div class="qline">你说的是</div>
+        <div class="myWord" id="sentWord"></div>
+        <div class="waiting"><span class="pulse"></span><span id="sentTip">等对方说出来…</span></div>
+      </div>
+
+      <div id="v-reveal" class="view">
+        <div class="verdict miss">没 撞 上</div>
+        <div class="pair">
+          <div class="side">
+            <div class="who">你</div>
+            <div class="w" id="rvMine"></div>
+            <div class="wn hidden" id="rvMineN"></div>
+          </div>
+          <div class="cross">×</div>
+          <div class="side">
+            <div class="who">对方</div>
+            <div class="w" id="rvTheirs"></div>
+            <div class="wn hidden" id="rvTheirsN"></div>
+          </div>
+        </div>
+        <button class="primary" id="nextBtn" type="button">继续</button>
+        <p class="hint center" id="rvHint">两边都点「继续」，才会开始下一轮的 30 秒。</p>
+      </div>
+
+      <div id="v-end" class="view">
+        <div class="verdict hit">同 词 相 见</div>
+        <div class="endWord" id="endWord">——</div>
+        <div id="endNorm" class="hidden"></div>
+        <div class="endMeta">第 <b id="endRound">1</b> 轮就对上了</div>
+        <div class="endActs">
+          <button class="primary" id="againBtn" type="button">再来一局</button>
+          <div class="row2">
+            <button class="ghostBtn" id="saveCard" type="button">保存战绩图</button>
+            <button class="ghostBtn" id="copyResult" type="button">复制战绩</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="historyWrap" class="card histWrap hidden">
+      <div class="histTitle">说过的词</div>
+      <div class="histHead"><span>轮次</span><span>你</span><span>对方</span><span></span></div>
+      <ol id="history" class="history"></ol>
+    </div>
+
+    <footer class="foot">
+      <button id="newRoom" class="link" type="button">开个新房间</button>
+      <span class="sep">·</span>
+      <button id="rulesBtn" class="link" type="button">规则</button>
+      <span class="sep">·</span>
+      <span id="syncNote" class="syncNote">连接中…</span>
+    </footer>
+  </section>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modalCard">
+    <div class="kicker">规则</div>
+    <h3>同词相见</h3>
+    <ol>
+      <li>每轮 30 秒，各自写一个词；时间到就把框里的内容自动发出去。</li>
+      <li>两个人都发完才一起揭晓。去掉标点、空格后完全一样，就算撞上，这一局结束。</li>
+      <li>没撞上时，两边都要点「继续」，下一轮的 30 秒才开始。</li>
+      <li>空着超时会算作没写，永远不会跟对方撞上。</li>
+    </ol>
+    <button class="primary" id="modalClose" type="button">知道了</button>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<div id="cardWrap" class="cardWrap hidden">
+  <div class="cardBox">
+    <img id="cardImg" alt="本局战绩">
+    <p class="hint">长按图片保存，或直接转发给朋友</p>
+    <button class="ghostBtn" id="cardClose" type="button">关闭</button>
+  </div>
+</div>
+<noscript><p style="text-align:center">这个页面需要开启 JavaScript。</p></noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= 常量 ================= */
+  var HOSTS = ['https://ntfy.sh', 'https://ntfy.envs.net', 'https://ntfy.mzte.de'];
+  var TOPIC_ROOT = 'tongci7f3a';
+  var ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var MAX_ROUNDS = 60;
+
+  /* ================= 工具 ================= */
+  function $(sel) { return document.querySelector(sel); }
+  function rid(n) {
+    var s = '', i;
+    n = n || 6;
+    for (i = 0; i < n; i++) s += ALPHA.charAt(Math.floor(Math.random() * ALPHA.length));
+    return s;
+  }
+  // 去标点、去空格、全角转半角、英文转小写
+  function norm(v) {
+    var s = (v == null ? '' : String(v));
+    try { s = s.normalize('NFKC'); } catch (e) {}
+    return s.toLowerCase()
+      .replace(/[\s\u200b-\u200d]/g, '')
+      .replace(/[\p{P}\p{Z}]/gu, '');
+  }
+
+  /* ================= 存档 ================= */
+  var mem = {};
+  var LS = {
+    get: function (k, d) {
+      try {
+        var v = window.localStorage.getItem(k);
+        return v == null ? d : JSON.parse(v);
+      } catch (e) {
+        return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : d;
+      }
+    },
+    set: function (k, v) {
+      try { window.localStorage.setItem(k, JSON.stringify(v)); }
+      catch (e) { mem[k] = v; }
+    }
+  };
+
+  /* ================= 状态 ================= */
+  var S = {
+    me: { id: '', name: '' },
+    room: '',
+    log: [],
+    cids: {},
+    lastId: null,
+    es: null,
+    hostIdx: 0,
+    sync: 'idle',
+    retry: 0,
+    retryT: null,
+    pollT: null,
+    sending: false,
+    view: '',
+    d: null,
+    lastMatch: 0,
+    pendingWord: '',
+    timerKey: '',
+    deadline: 0,
+    autoFired: false
+  };
+
+  /* ================= 核心：从消息流推导局面 ================= */
+  function derive(log, myId) {
+    var players = {}, lastAt = {}, words = {}, ys = {}, match = 1, i, m, p, key;
+
+    for (i = 0; i < log.length; i++) {
+      m = log[i];
+      if (!m || typeof m !== 'object') continue;
+      var okMR = typeof m.m === 'number' && typeof m.r === 'number' &&
+                 m.m % 1 === 0 && m.r % 1 === 0 && m.m >= 1 && m.m <= 999 &&
+                 m.r >= 1 && m.r <= MAX_ROUNDS;
+      if (m.t === 'join' && typeof m.p === 'string' && typeof m.n === 'string') {
+        if (!players[m.p]) players[m.p] = m.n.slice(0, 12) || '玩家';
+        lastAt[m.p] = i;
+      } else if (m.t === 'w' && typeof m.p === 'string' && typeof m.w === 'string' && okMR) {
+        words[m.m + '|' + m.r + '|' + m.p] = m.w.slice(0, 40);
+        if (!players[m.p]) { players[m.p] = '对方'; lastAt[m.p] = i; }
+      } else if (m.t === 'y' && typeof m.p === 'string' && okMR) {
+        ys[m.m + '|' + m.r + '|' + m.p] = 1;
+        if (!players[m.p]) { players[m.p] = '对方'; lastAt[m.p] = i; }
+      } else if (m.t === 'reset' && typeof m.m === 'number' && m.m % 1 === 0 && m.m >= 1 && m.m <= 999) {
+        if (m.m > match) match = m.m;
+      }
+    }
+
+    var peerId = null;
+    for (p in lastAt) {
+      if (p === myId) continue;
+      if (!peerId || lastAt[p] > lastAt[peerId]) peerId = p;
+    }
+
+    var rounds = [], done = false, r, mine, theirs, same;
+    for (r = 1; r <= MAX_ROUNDS; r++) {
+      mine = words[match + '|' + r + '|' + myId];
+      theirs = peerId ? words[match + '|' + r + '|' + peerId] : undefined;
+      if (mine === undefined || theirs === undefined) break;
+      // 空字符串（超时没写）永远不算撞上
+      same = norm(mine) !== '' && norm(mine) === norm(theirs);
+      rounds.push({ r: r, mine: mine, theirs: theirs, same: same });
+      if (same) { done = true; break; }
+    }
+
+    var cur = rounds.length + 1;
+    var myCur, peerCur;
+    if (cur <= MAX_ROUNDS) {
+      key = match + '|' + cur + '|';
+      myCur = words[key + myId];
+      peerCur = peerId ? words[key + peerId] : undefined;
+    }
+
+    // 双方都点了「继续」，下一轮才开始；第 1 轮不用点
+    var myReady = !!ys[match + '|' + cur + '|' + myId];
+    var peerReady = peerId ? !!ys[match + '|' + cur + '|' + peerId] : false;
+    var active = (cur === 1) || (myReady && peerReady);
+
+    return {
+      match: match,
+      peerId: peerId,
+      peerName: peerId ? players[peerId] : '',
+      rounds: rounds,
+      done: done,
+      cur: cur,
+      myCur: myCur,
+      peerCur: peerCur,
+      myReady: myReady,
+      peerReady: peerReady,
+      active: active,
+      last: rounds.length ? rounds[rounds.length - 1] : null
+    };
+  }
+
+  /* ================= 通信 ================= */
+  function base() { return HOSTS[S.hostIdx]; }
+  function topic() { return TOPIC_ROOT + '-' + S.room.toLowerCase(); }
+
+  function ingest(m) {
+    if (!m || typeof m !== 'object') return false;
+    if (typeof m.cid !== 'string' || !m.cid) return false;
+    if (typeof m.p !== 'string' || !m.p) return false;
+    if (S.cids[m.cid]) return false;
+    S.cids[m.cid] = 1;
+    S.log.push(m);
+    return true;
+  }
+
+  function send(msg, cb) {
+    msg.p = S.me.id;
+    msg.cid = msg.cid || rid(10);
+    msg.ts = Date.now();
+    var body = JSON.stringify(msg);
+    ingest(msg);
+    render();
+
+    var ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 9000);
+    var opts = {
+      method: 'POST',
+      body: body,
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
+    };
+    if (ctl) opts.signal = ctl.signal;
+
+    window.fetch(base() + '/' + topic(), opts).then(function (res) {
+      clearTimeout(timer);
+      if (!res.ok) throw new Error('服务器返回 ' + res.status);
+      S.retry = 0;
+      setSync('live');
+      if (cb) cb(true);
+    })['catch'](function (err) {
+      clearTimeout(timer);
+      S.log = S.log.filter(function (x) { return x.cid !== msg.cid; });
+      try { delete S.cids[msg.cid]; } catch (e) { S.cids[msg.cid] = 0; }
+      toast('没发出去：' + ((err && err.message) || '网络问题'));
+      setSync('retry');
+      render();
+      if (cb) cb(false);
+    });
+  }
+
+  function handleEnvelope(text) {
+    var m;
+    try { m = JSON.parse(text); } catch (e) { return; }
+    if (!m || typeof m !== 'object') return;
+    if (m.event !== 'message') return;
+    if (m.id) S.lastId = m.id;
+    if (typeof m.message !== 'string') return;
+    var obj;
+    try { obj = JSON.parse(m.message); } catch (e) { return; }
+    if (ingest(obj)) render();
+  }
+
+  // 进房间的 join 如果没发出去，连上之后再补一次
+  function ensureJoin() {
+    if (!S.room) return;
+    var i;
+    for (i = 0; i < S.log.length; i++) {
+      if (S.log[i].t === 'join' && S.log[i].p === S.me.id) return;
+    }
+    send({ t: 'join', n: S.me.name });
+  }
+
+  function closeStream() {
+    if (S.es) { try { S.es.close(); } catch (e) {} S.es = null; }
+    if (S.pollT) { clearTimeout(S.pollT); S.pollT = null; }
+  }
+
+  function connect() {
+    closeStream();
+    clearTimeout(S.retryT);
+    setSync(S.retry > 0 ? 'retry' : 'connecting');
+    if (typeof window.EventSource === 'undefined') { startPolling(); return; }
+
+    // 一律重播全部缓存：消息量很小，靠 cid 去重即可，断线重连最稳
+    var url = base() + '/' + topic() + '/sse?since=all';
+    var es;
+    try { es = new window.EventSource(url); } catch (e) { scheduleRetry(); return; }
+    S.es = es;
+    es.onopen = function () { S.retry = 0; setSync('live'); ensureJoin(); };
+    es.onmessage = function (ev) { handleEnvelope(ev.data); };
+    es.onerror = function () {
+      if (S.es !== es) return;
+      closeStream();
+      scheduleRetry();
+    };
+  }
+
+  function startPolling() {
+    closeStream();
+    setSync(S.retry > 0 ? 'retry' : 'connecting');
+    (function step() {
+      var since = S.lastId || 'all';
+      var url = base() + '/' + topic() + '/json?poll=1&since=' + encodeURIComponent(since);
+      window.fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('服务器返回 ' + r.status);
+        return r.text();
+      }).then(function (t) {
+        var lines = t.split('\n'), i;
+        for (i = 0; i < lines.length; i++) if (lines[i].trim()) handleEnvelope(lines[i]);
+        S.retry = 0;
+        setSync('live');
+        ensureJoin();
+        S.pollT = setTimeout(step, 1600);
+      })['catch'](function () { scheduleRetry(); });
+    })();
+  }
+
+  function scheduleRetry() {
+    S.retry++;
+    setSync(S.retry >= 4 ? 'dead' : 'retry');
+    var wait = Math.min(1200 * Math.pow(1.7, Math.min(S.retry, 4)), 12000);
+    clearTimeout(S.retryT);
+    S.retryT = setTimeout(function () {
+      if (S.es) return;
+      if (typeof window.EventSource === 'undefined') startPolling();
+      else connect();
+    }, wait);
+  }
+
+  function setSync(state) {
+    S.sync = state;
+    updateSync();
+  }
+
+  function updateSync() {
+    var n = $('#syncNote');
+    if (!n) return;
+    var txt = '已同步', cls = '';
+    if (S.sync === 'connecting') { txt = '连接中…'; cls = 'warn'; }
+    else if (S.sync === 'retry') { txt = '重连中…'; cls = 'warn'; }
+    else if (S.sync === 'dead') { txt = '连不上同步服务器'; cls = 'bad'; }
+    n.textContent = txt;
+    n.className = 'syncNote ' + cls;
+
+    var b = $('#banner');
+    var show = (S.sync === 'retry' || S.sync === 'dead');
+    b.classList.toggle('hidden', !show);
+    if (show) {
+      $('#bannerText').textContent = S.sync === 'dead'
+        ? '和同步服务器断了，消息可能发不出去。'
+        : '网络有点抖，正在重连…';
+      $('#altHost').classList.toggle('hidden', S.sync !== 'dead');
+    }
+  }
+
+  /* ================= 渲染 ================= */
+  function wordText(w) { return w === '' ? '（超时）' : w; }
+
+  function fillWord(wEl, nEl, raw) {
+    wEl.textContent = wordText(raw);
+    var n = norm(raw);
+    if (n && n !== raw) {
+      nEl.textContent = '去标点后：' + n;
+      nEl.classList.remove('hidden');
+    } else {
+      nEl.textContent = '';
+      nEl.classList.add('hidden');
+    }
+  }
+
+  /* ---- 30 秒计时 ---- */
+  var ROUND_MS = 30000;
+
+  function timerKey(room, match, round) { return room + '|' + match + '|' + round; }
+
+  function ensureTimer(key) {
+    if (S.timerKey === key) return;
+    S.timerKey = key;
+    S.autoFired = false;
+    var now = Date.now();
+    var saved = LS.get('tcy_dl_' + S.room, null);
+    if (saved && saved.k === key && saved.d > now - 8000 && saved.d < now + ROUND_MS + 10000) {
+      S.deadline = saved.d;   // 刷新页面后接着走，不重新数
+    } else {
+      S.deadline = now + ROUND_MS;
+      LS.set('tcy_dl_' + S.room, { k: key, d: S.deadline });
+    }
+  }
+
+  function tick() {
+    if (!S.room || S.view !== 'input' || !S.d) return;
+    var fill = $('#tFill'), num = $('#tLeft'), box = num ? num.parentNode : null;
+    if (!fill || !num) return;
+    var left = S.deadline - Date.now();
+    var pct = Math.max(0, Math.min(1, left / ROUND_MS));
+    fill.style.width = (pct * 100).toFixed(1) + '%';
+    fill.className = left <= 10000 ? 'warn' : '';
+    num.textContent = String(Math.max(0, Math.ceil(left / 1000)));
+    if (box) box.className = 'tnum' + (left <= 10000 ? ' warn' : '');
+    if (left <= 0 && !S.autoFired) {
+      S.autoFired = true;
+      submitWord(null, true);
+    }
+  }
+
+  function showView(name) {
+    var changed = S.view !== name;
+    S.view = name;
+    var all = ['wait', 'input', 'sent', 'reveal', 'end'], i, v;
+    for (i = 0; i < all.length; i++) {
+      v = $('#v-' + all[i]);
+      if (v) v.classList.toggle('on', all[i] === name);
+    }
+    if (name === 'input' && changed) {
+      setTimeout(function () {
+        var inp = $('#wordInput');
+        try { inp.focus(); } catch (e) {}
+      }, 60);
+    }
+  }
+
+  function renderHistory(d) {
+    var wrap = $('#historyWrap'), ol = $('#history'), i, x, li, a, b, c, e;
+    if (!d.rounds.length) { wrap.classList.add('hidden'); return; }
+    wrap.classList.remove('hidden');
+    ol.innerHTML = '';
+    for (i = 0; i < d.rounds.length; i++) {
+      x = d.rounds[i];
+      li = document.createElement('li');
+      if (x.same) li.className = 'hit';
+      a = document.createElement('span'); a.className = 'hn'; a.textContent = '第' + x.r + '轮';
+      b = document.createElement('span'); b.className = 'hw'; b.textContent = wordText(x.mine);
+      c = document.createElement('span'); c.className = 'hw'; c.textContent = wordText(x.theirs);
+      e = document.createElement('span'); e.className = 'hm'; e.textContent = x.same ? '✓' : '✗';
+      li.appendChild(a); li.appendChild(b); li.appendChild(c); li.appendChild(e);
+      ol.appendChild(li);
+    }
+  }
+
+  function render() {
+    if (!S.room) return;
+    var d = derive(S.log, S.me.id);
+    S.d = d;
+
+    if (S.lastMatch && d.match !== S.lastMatch) toast('对方开了新的一局');
+    S.lastMatch = d.match;
+
+    $('#roomChip').textContent = '房间 ' + S.room;
+
+    var pc = $('#peerChip');
+    if (d.peerId) {
+      pc.textContent = d.peerName + ' 已加入';
+      pc.classList.remove('ghost');
+    } else {
+      pc.textContent = '等待对方';
+      pc.classList.add('ghost');
+    }
+
+    var view;
+    if (!d.peerId) view = 'wait';
+    else if (d.done) view = 'end';
+    else if (!d.active) view = 'reveal';
+    else if (d.myCur !== undefined) view = 'sent';
+    else view = 'input';
+
+    $('#roundNum').textContent = String(d.done ? d.rounds.length
+      : (view === 'reveal' && d.last ? d.last.r : d.cur));
+
+    if (view === 'input') ensureTimer(timerKey(S.room, d.match, d.cur));
+
+    showView(view);
+
+    if (view === 'wait') {
+      $('#waitCode').textContent = S.room;
+    } else if (view === 'input') {
+      $('#iRound').textContent = String(d.cur);
+      $('#peerHint').classList.toggle('hidden', d.peerCur === undefined);
+      if (S.pendingWord) { $('#wordInput').value = S.pendingWord; S.pendingWord = ''; }
+      tick();
+    } else if (view === 'sent') {
+      $('#sentWord').textContent = wordText(d.myCur);
+    } else if (view === 'reveal') {
+      fillWord($('#rvMine'), $('#rvMineN'), d.last.mine);
+      fillWord($('#rvTheirs'), $('#rvTheirsN'), d.last.theirs);
+      var btn = $('#nextBtn');
+      btn.disabled = d.myReady;
+      btn.textContent = d.myReady ? '等对方点继续…' : ('继续 · 第 ' + d.cur + ' 轮');
+      $('#rvHint').textContent = d.myReady
+        ? '你已经点了，等对方也点「继续」。'
+        : (d.peerReady ? '对方已经点了继续，就差你。' : '两边都点「继续」，才会开始下一轮的 30 秒。');
+      $('#rvHint').classList.toggle('hot', !d.myReady && d.peerReady);
+    } else if (view === 'end') {
+      var win = d.rounds[d.rounds.length - 1];
+      $('#endWord').textContent = norm(win.mine) || win.mine;
+      $('#endRound').textContent = String(d.rounds.length);
+      var en = $('#endNorm');
+      if (win.theirs !== win.mine) {
+        en.textContent = '你写的是「' + win.mine + '」，对方写的是「' + win.theirs + '」';
+        en.classList.remove('hidden');
+      } else {
+        en.textContent = '';
+        en.classList.add('hidden');
+      }
+    }
+
+    renderHistory(d);
+    updateSync();
+  }
+
+  /* ================= 交互 ================= */
+  var toastT = null;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.classList.remove('on'); }, 2800);
+  }
+
+  function copyText(text) {
+    var done = function () { toast('复制好了'); };
+    var fail = function () { toast('复制失败，手动选中吧'); };
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done)['catch'](function () { legacy(); });
+        return;
+      }
+    } catch (e) {}
+    legacy();
+    function legacy() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      if (ok) done(); else fail();
+    }
+  }
+
+  /* ================= 战绩图 ================= */
+  var F_SERIF = '"Songti SC","STSong","SimSun",Georgia,serif';
+  var F_SANS = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  function fitText(g, text, maxW) {
+    if (g.measureText(text).width <= maxW) return text;
+    var s = text;
+    while (s.length > 1 && g.measureText(s + '…').width > maxW) s = s.slice(0, -1);
+    return s + '…';
+  }
+
+  // 大标题先缩字号，实在放不下再截断
+  function heroFit(g, text, maxW, start, min) {
+    var size = start;
+    while (size > min) {
+      g.font = '600 ' + size + 'px ' + F_SERIF;
+      if (g.measureText(text).width <= maxW) return text;
+      size -= 6;
+    }
+    g.font = '600 ' + min + 'px ' + F_SERIF;
+    return fitText(g, text, maxW);
+  }
+
+  function stamp() {
+    var t = new Date();
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return t.getFullYear() + '-' + p(t.getMonth() + 1) + '-' + p(t.getDate()) +
+      ' ' + p(t.getHours()) + ':' + p(t.getMinutes());
+  }
+
+  function drawCard(d) {
+    var rows = d.rounds.length;
+    var W = 1080, pad = 84, rowH = 78, listTop = 648;
+    var H = listTop + rows * rowH + 210;
+    var cv = document.createElement('canvas');
+    cv.width = W;
+    cv.height = H;
+    var g = cv.getContext('2d');
+
+    g.fillStyle = '#f5eddf';
+    g.fillRect(0, 0, W, H);
+    roundRect(g, 36, 36, W - 72, H - 72, 44);
+    g.fillStyle = '#fffdf8';
+    g.fill();
+    g.strokeStyle = '#e7dcc8';
+    g.lineWidth = 2;
+    g.stroke();
+
+    g.textBaseline = 'alphabetic';
+    g.textAlign = 'left';
+    g.fillStyle = '#a8987f';
+    g.font = '400 27px ' + F_SANS;
+    g.fillText('1 对 1 · 默契复盘', pad, 150);
+
+    g.fillStyle = '#2a2521';
+    g.font = '600 78px ' + F_SERIF;
+    g.fillText('同词相见', pad, 250);
+
+    var win = d.rounds[rows - 1];
+    var heroText = norm(win.mine) || win.mine;
+    g.textAlign = 'center';
+    g.fillStyle = '#2f6b4f';
+    g.fillText(heroFit(g, heroText, W - pad * 2, 112, 56), W / 2, 415);
+
+    g.fillStyle = '#8b8072';
+    g.font = '400 32px ' + F_SANS;
+    g.fillText('第 ' + rows + ' 轮就对上了', W / 2, 482);
+
+    g.strokeStyle = '#efe4d2';
+    g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(pad, 540);
+    g.lineTo(W - pad, 540);
+    g.stroke();
+
+    g.textAlign = 'left';
+    g.fillStyle = '#c2b5a1';
+    g.font = '400 25px ' + F_SANS;
+    g.fillText('轮次', pad, 600);
+    g.fillText('你', pad + 180, 600);
+    g.fillText('对方', pad + 556, 600);
+
+    g.textBaseline = 'middle';
+    var i, it, y;
+    for (i = 0; i < rows; i++) {
+      it = d.rounds[i];
+      y = listTop + i * rowH + rowH / 2;
+
+      g.fillStyle = '#b3a692';
+      g.font = '400 28px ' + F_SANS;
+      g.fillText('第' + it.r + '轮', pad, y);
+
+      g.fillStyle = it.same ? '#2f6b4f' : '#2a2521';
+      g.font = '400 38px ' + F_SERIF;
+      g.fillText(fitText(g, wordText(it.mine), 330), pad + 180, y);
+      g.fillText(fitText(g, wordText(it.theirs), 300), pad + 556, y);
+
+      g.textAlign = 'right';
+      g.fillStyle = it.same ? '#2f6b4f' : '#cdbfa8';
+      g.font = '400 30px ' + F_SANS;
+      g.fillText(it.same ? '✓' : '×', W - pad, y);
+      g.textAlign = 'left';
+    }
+
+    g.textBaseline = 'alphabetic';
+    g.fillStyle = '#b3a692';
+    g.font = '400 24px ' + F_SANS;
+    g.fillText('房间 ' + S.room + ' · ' + stamp(), pad, H - 120);
+    g.fillStyle = '#c9bda8';
+    g.font = '400 22px ' + F_SANS;
+    g.fillText('同词相见 · 两个人在同一分钟想到了一起', pad, H - 78);
+
+    return cv;
+  }
+
+  function saveCard() {
+    var d = S.d;
+    if (!d || !d.rounds.length) return;
+    var cv = drawCard(d);
+    var name = '同词相见-' + S.room + '-' + d.rounds.length + '轮.png';
+
+    cv.toBlob(function (blob) {
+      if (!blob) { toast('图片生成失败'); return; }
+      var url = URL.createObjectURL(blob);
+
+      if (/MicroMessenger/i.test(navigator.userAgent)) {
+        $('#cardImg').src = url;
+        $('#cardWrap').classList.remove('hidden');
+        return;
+      }
+
+      var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      var file = null;
+      try { file = new File([blob], name, { type: 'image/png' }); } catch (e) { file = null; }
+      if (coarse && file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file] })['catch'](function () {});
+        return;
+      }
+
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+      toast('战绩图已保存');
+    }, 'image/png');
+  }
+
+  function submitWord(raw, auto) {
+    var d = S.d;
+    if (!d || !d.peerId) return;
+    if (d.myCur !== undefined) return;
+    var text = (raw == null ? ($('#wordInput').value || '') : String(raw)).trim();
+    if (!auto) {
+      if (!text) { toast('先写点东西'); return; }
+      if (!norm(text)) { toast('去掉标点空格就空了，换个词吧'); return; }
+    } else if (!norm(text)) {
+      text = '';   // 30 秒到了框里是空的，就发一个空的（空永远不算撞上）
+    }
+    if (S.sending) return;
+    S.sending = true;
+    $('#wordInput').value = '';
+    send({ t: 'w', m: d.match, r: d.cur, w: text.slice(0, 40), to: auto ? 1 : 0 }, function (ok) {
+      S.sending = false;
+      if (!ok) S.pendingWord = text;
+      else if (auto) toast('时间到，已经替你发出去了');
+      render();
+    });
+  }
+
+  function enterRoom(room, name) {
+    S.room = room;
+    S.me.name = name;
+    S.log = [];
+    S.cids = {};
+    S.lastId = null;
+    S.retry = 0;
+    S.view = '';
+    S.lastMatch = 0;
+    S.timerKey = '';
+    S.deadline = 0;
+    S.autoFired = false;
+    $('#gate').classList.add('hidden');
+    $('#room').classList.remove('hidden');
+    LS.set('tcy_name', name);
+    LS.set('tcy_room', room);
+    send({ t: 'join', n: name });
+    connect();
+  }
+
+  function boot() {
+    /* ---- 身份 ---- */
+    var savedPid = LS.get('tcy_pid', '');
+    var savedName = LS.get('tcy_name', '');
+
+    /* 同一个浏览器开了第二个窗口时，自动换一个身份，方便自己开两个窗口试玩 */
+    var tabId = rid(6);
+    var TAB_KEY = 'tcy_tab_' + tabId;
+    function touchTab() { LS.set(TAB_KEY, Date.now()); }
+    function liveTabs() {
+      var n = 0, i, k, v;
+      try {
+        for (i = 0; i < window.localStorage.length; i++) {
+          k = window.localStorage.key(i);
+          if (!k || k.indexOf('tcy_tab_') !== 0 || k === TAB_KEY) continue;
+          try { v = JSON.parse(window.localStorage.getItem(k)) || 0; } catch (e) { v = 0; }
+          if (Date.now() - v < 8000) { n++; }
+          else { try { window.localStorage.removeItem(k); } catch (e2) {} }
+        }
+      } catch (e3) { return 0; }
+      return n;
+    }
+
+    var pid = '';
+    try { pid = window.sessionStorage.getItem('tcy_pid') || ''; } catch (e0) { pid = ''; }
+    if (!pid) {
+      var others = liveTabs();
+      pid = others > 0 ? rid(6) : (savedPid || rid(6));
+      if (others === 0) LS.set('tcy_pid', pid);
+      try { window.sessionStorage.setItem('tcy_pid', pid); } catch (e1) {}
+    }
+    touchTab();
+    setInterval(touchTab, 3000);
+    window.addEventListener('pagehide', function () {
+      try { window.localStorage.removeItem(TAB_KEY); } catch (e) {}
+    });
+
+    S.me.id = pid;
+    S.me.name = savedName || '';
+
+    /* ---- 入口 ---- */
+    $('#nameInput').value = savedName || '';
+    var qs = (location.search || '').replace(/^\?/, '');
+    var pre = '';
+    qs.split('&').forEach(function (kv) {
+      var p = kv.split('=');
+      if (p[0] === 'r' && p[1]) pre = decodeURIComponent(p[1]);
+    });
+    $('#codeInput').value = (pre || LS.get('tcy_room', '') || '').toUpperCase();
+
+    $('#randBtn').addEventListener('click', function () {
+      $('#codeInput').value = rid(6);
+    });
+
+    function go() {
+      var name = ($('#nameInput').value || '').trim().slice(0, 10) || '玩家';
+      var code = ($('#codeInput').value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (code.length < 4) { code = rid(6); }
+      code = code.slice(0, 8);
+      enterRoom(code, name);
+    }
+    $('#enterBtn').addEventListener('click', go);
+    $('#nameInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    $('#codeInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+
+    /* ---- 游戏内 ---- */
+    $('#sendBtn').addEventListener('click', function () { submitWord(null, false); });
+    $('#wordInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); submitWord(null, false); }
+    });
+
+    $('#nextBtn').addEventListener('click', function () {
+      var d = S.d;
+      if (!d || !d.peerId || d.myReady) return;
+      send({ t: 'y', m: d.match, r: d.cur });
+    });
+
+    setInterval(tick, 200);
+
+    $('#copyInvite').addEventListener('click', function () {
+      copyText('同词相见 · 房间口令：' + S.room +
+        '\n打开同一个网页，输入这个口令，我们就能对上。');
+    });
+
+    $('#saveCard').addEventListener('click', saveCard);
+    $('#cardClose').addEventListener('click', function () {
+      $('#cardWrap').classList.add('hidden');
+    });
+    $('#cardWrap').addEventListener('click', function (e) {
+      if (e.target === $('#cardWrap')) $('#cardWrap').classList.add('hidden');
+    });
+
+    $('#copyResult').addEventListener('click', function () {
+      var d = S.d;
+      if (!d) return;
+      var lines = ['同词相见 · 第 ' + d.rounds.length + ' 轮撞上了「' + wordText(d.rounds[d.rounds.length - 1].mine) + '」'];
+      d.rounds.forEach(function (x) {
+        lines.push('第' + x.r + '轮：' + wordText(x.mine) + ' / ' + wordText(x.theirs) + (x.same ? ' ✓' : ''));
+      });
+      copyText(lines.join('\n'));
+    });
+
+    $('#againBtn').addEventListener('click', function () {
+      var d = S.d;
+      if (!d) return;
+      send({ t: 'reset', m: d.match + 1 });
+    });
+
+    $('#newRoom').addEventListener('click', function () {
+      closeStream();
+      clearTimeout(S.retryT);
+      S.log = [];
+      S.cids = {};
+      S.lastId = null;
+      S.retry = 0;
+      S.view = '';
+      S.lastMatch = 0;
+      S.timerKey = '';
+      S.deadline = 0;
+      S.autoFired = false;
+      S.room = rid(6);
+      LS.set('tcy_room', S.room);
+      render();
+      send({ t: 'join', n: S.me.name });
+      connect();
+      toast('开了个新房间：' + S.room);
+    });
+
+    $('#altHost').addEventListener('click', function () {
+      S.hostIdx = (S.hostIdx + 1) % HOSTS.length;
+      S.retry = 0;
+      S.lastId = null;
+      toast('换到 ' + HOSTS[S.hostIdx]);
+      connect();
+    });
+
+    /* ---- 规则弹窗 ---- */
+    $('#rulesBtn').addEventListener('click', function () { $('#modal').classList.remove('hidden'); });
+    $('#modalClose').addEventListener('click', function () { $('#modal').classList.add('hidden'); });
+    $('#modal').addEventListener('click', function (e) {
+      if (e.target === $('#modal')) $('#modal').classList.add('hidden');
+    });
+
+    /* ---- 回到前台重连 ---- */
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && S.room && !S.es &&
+          typeof window.EventSource !== 'undefined') {
+        connect();
+      }
+    });
+  }
+
+  /* 给测试用 */
+  window.__tcy = { norm: norm, derive: derive, render: render, card: drawCard, S: S };
+
+  if (typeof document !== 'undefined' && document.getElementById &&
+      typeof window !== 'undefined' && window.addEventListener) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+  }
+})();
+</script>
+</body>
+</html>
