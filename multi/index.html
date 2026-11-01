@@ -526,22 +526,22 @@
                  m.r >= 1 && m.r <= MAX_ROUNDS;
 
       if (m.t === 'join' && typeof m.p === 'string' && typeof m.n === 'string') {
-        if (!players[m.p]) { players[m.p] = m.n.slice(0, 12) || '玩家'; firstAt[m.p] = i; }
+        if (!players[m.p]) { players[m.p] = m.n.slice(0, 12) || '玩家'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
         lastAt[m.p] = i;
         if (!hostId) hostId = m.p;
       } else if (m.t === 'cfg' && typeof m.p === 'string' &&
                  typeof m.n === 'number' && m.n >= 2 && m.n <= 4) {
         if (!size) size = m.n;               // 第一条为准
-        if (!players[m.p]) { players[m.p] = '房主'; firstAt[m.p] = i; }
+        if (!players[m.p]) { players[m.p] = '房主'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
         lastAt[m.p] = i;
         if (!hostId) hostId = m.p;
       } else if (m.t === 'w' && typeof m.p === 'string' && typeof m.w === 'string' && okMR) {
         words[m.m + '|' + m.r + '|' + m.p] = m.w.slice(0, 40);
-        if (!players[m.p]) { players[m.p] = '玩家'; firstAt[m.p] = i; }
+        if (!players[m.p]) { players[m.p] = '玩家'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
         lastAt[m.p] = i;
       } else if (m.t === 'y' && typeof m.p === 'string' && okMR) {
         ys[m.m + '|' + m.r + '|' + m.p] = 1;
-        if (!players[m.p]) { players[m.p] = '玩家'; firstAt[m.p] = i; }
+        if (!players[m.p]) { players[m.p] = '玩家'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
         lastAt[m.p] = i;
       } else if (m.t === 'reset' && typeof m.m === 'number' && m.m % 1 === 0 && m.m >= 1 && m.m <= 999) {
         if (m.m > match) match = m.m;
@@ -552,12 +552,15 @@
     var ids = Object.keys(players);
     var order = ids.slice().sort(function (a, b) { return lastAt[b] - lastAt[a]; });
     var roster = size ? order.slice(0, size) : order.slice();
-    roster.sort(function (a, b) { return (firstAt[a] || 0) - (firstAt[b] || 0); });
+    roster.sort(function (a, b) {
+      var d1 = (firstAt[a] || 0) - (firstAt[b] || 0);
+      if (d1 !== 0) return d1;
+      return a < b ? -1 : 1;
+    });
 
     var inRoster = roster.indexOf(myId) > -1;
     var cur = 1, rounds = [], done = false, r, ws, complete, pid, w, k;
     var groups, keys, bestK, bestN;
-
     if (roster.length && (!size || roster.length >= size)) {
       for (r = 1; r <= MAX_ROUNDS; r++) {
         ws = [];
@@ -610,10 +613,13 @@
     var allReady = roster.length > 0 && readyCount === roster.length;
     var active = (cur === 1) || allReady;
 
-    // 这一轮谁交了
+    // 这一轮谁交了（结束后看最后一轮）
+    var subsRound = done && rounds.length ? rounds[rounds.length - 1].r : cur;
     var subs = {};
-    if (cur <= MAX_ROUNDS) {
-      for (i = 0; i < roster.length; i++) if (words[match + '|' + cur + '|' + roster[i]] !== undefined) subs[roster[i]] = 1;
+    if (subsRound <= MAX_ROUNDS) {
+      for (i = 0; i < roster.length; i++) {
+        if (words[match + '|' + subsRound + '|' + roster[i]] !== undefined) subs[roster[i]] = 1;
+      }
     }
 
     return {
