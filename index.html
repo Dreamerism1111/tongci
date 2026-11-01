@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5eddf">
-<title>同词相见 · 1 对 1</title>
+<title>同词相见</title>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0}
@@ -199,6 +199,51 @@
   .history li.hit .hm{color:#2f6b4f}
   .history li.hit .hw{color:#2f6b4f}
 
+  .roster{display:flex;gap:8px;margin-bottom:12px}
+  .seat{
+    flex:1;min-width:0;background:#fffdf8;border:1px solid #e7dcc8;border-radius:14px;
+    padding:8px 10px;display:flex;flex-direction:column;gap:2px;
+  }
+  .seat b{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .seat span{font-size:11px;color:#b3a692;letter-spacing:.04em}
+  .seat.me{border-color:#cdbb9c;background:#fffaf0}
+  .seat.done span{color:#2f6b4f}
+  .seat.empty{border-style:dashed;background:transparent;opacity:.7}
+
+  .pickRow{display:flex;gap:10px;margin:8px 0 14px}
+  .pick{
+    flex:1;border:1px solid #e4d8c3;background:#fffefa;border-radius:16px;
+    padding:18px 6px 14px;display:flex;flex-direction:column;align-items:center;gap:2px;
+    transition:border-color .15s, background .15s, transform .08s;
+  }
+  .pick b{font-family:"Songti SC","STSong","SimSun",Georgia,serif;font-size:34px;line-height:1}
+  .pick span{font-size:12px;color:#a2947f;letter-spacing:.08em}
+  .pick:hover{border-color:#cdbb9c;background:#fff7e9}
+  .pick:active{transform:scale(.97)}
+
+  .linkBtn{display:block;margin:14px auto 0;font-size:13px;color:#a2947f;
+    text-decoration:underline;text-underline-offset:3px}
+
+  .trio{display:flex;gap:8px;margin:4px 0 20px}
+  .trio .cell{flex:1;min-width:0;text-align:center;border-radius:14px;padding:12px 5px;
+    background:#fbf6ec;border:1px solid #f0e6d4}
+  .trio .cell.hit{background:#eef6f0;border-color:#bcd8c6}
+  .trio .cell .nm{font-size:11px;color:#a8987f;margin-bottom:7px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .trio .cell .w{font-family:"Songti SC","STSong","SimSun",Georgia,serif;
+    font-size:clamp(15px,4.4vw,26px);line-height:1.25;word-break:break-word}
+  .trio .cell.hit .w{color:#2f6b4f}
+
+  .endWho{text-align:center;font-size:15px;color:#6f6558;margin:-2px 0 10px}
+  .endWho b{color:#2f6b4f;font-weight:600}
+
+  .history .hblk{display:block;padding:10px 0;border-top:1px solid #f2e9da;font-size:14px}
+  .history .hblk:first-child{border-top:none}
+  .hblk .hn{font-size:12px;color:#b3a692;letter-spacing:.06em;margin-bottom:3px}
+  .hblk .hw2{font-size:14px;line-height:1.9}
+  .hblk .hw2 span{margin-right:12px;white-space:nowrap;display:inline-block}
+  .hblk .hw2 span.hit{color:#2f6b4f;font-weight:600}
+
   .foot{
     display:flex;align-items:center;gap:8px;justify-content:center;
     margin-top:18px;font-size:13px;color:#b3a692;flex-wrap:wrap;
@@ -239,9 +284,9 @@
 
   <!-- ================= 入口 ================= -->
   <section id="gate" class="card gate">
-    <div class="kicker">1 对 1 · 默契小游戏</div>
+    <div class="kicker">2–4 人 · 默契小游戏</div>
     <h1 class="brand">同词相见</h1>
-    <p class="lede">你和屏幕那头的人，各自说一个词。<br>撞上了，这一局就结束。</p>
+    <p class="lede">一群人，同一轮各自说一个词。<br>谁和谁撞上，这一局就结束。</p>
 
     <div class="field">
       <label for="nameInput">你的名字</label>
@@ -251,10 +296,10 @@
     <div class="field">
       <label for="codeInput">房间口令</label>
       <div class="codeRow">
-        <input id="codeInput" type="text" maxlength="8" placeholder="和对方约好同一个" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        <input id="codeInput" type="text" maxlength="8" placeholder="大家约好同一个" autocapitalize="characters" autocomplete="off" spellcheck="false">
         <button id="randBtn" class="ghostBtn" type="button">随机</button>
       </div>
-      <p class="hint">两个人在两台设备上输入同一个口令，就进同一个房间。</p>
+      <p class="hint">每人一台设备，输同一个口令就进同一个房间。几个人玩，由第一个进来的人定。</p>
     </div>
 
     <button id="enterBtn" class="primary" type="button">进房间</button>
@@ -262,10 +307,10 @@
     <details class="rules">
       <summary>怎么玩</summary>
       <ol>
-        <li>每一轮 30 秒，写一个词或一句话，点「说出来」。</li>
-        <li>30 秒一到，打字框里的内容会直接发出去；空着就当作没写。</li>
-        <li>两个人都说完才一起揭晓。去掉标点和空格后一模一样，就算「同词相见」，这一局结束。</li>
-        <li>没撞上时，两边都点「继续」，下一轮的 30 秒才开始。</li>
+        <li>第一个进房间的人选人数：2 人、3 人或 4 人。</li>
+        <li>每轮 30 秒，各自写一个词；时间到就把框里的内容自动发出去。</li>
+        <li>人齐了才揭晓。去掉标点和空格后，只要有两个人一样，就算「同词相见」，这一局结束。</li>
+        <li>全都不一样时，所有人点「继续」，下一轮的 30 秒才开始。</li>
       </ol>
       <p class="tiny">这个词句会经过公共消息服务（ntfy）中转，别写隐私内容。</p>
     </details>
@@ -275,10 +320,10 @@
   <section id="room" class="hidden">
     <header class="top">
       <div>
-        <div class="kicker">同词相见</div>
+        <div class="kicker">同词相见 · 多人</div>
         <div class="chips">
           <span id="roomChip" class="chip">房间</span>
-          <span id="peerChip" class="chip ghost">等待对方</span>
+          <span id="seatChip" class="chip ghost">0 / 0 人</span>
         </div>
       </div>
       <div class="roundBox">
@@ -287,17 +332,37 @@
       </div>
     </header>
 
+    <div id="roster" class="roster"></div>
+
     <div id="banner" class="banner hidden">
       <span id="bannerText"></span>
       <button id="altHost" class="mini hidden" type="button">换个服务器</button>
     </div>
 
     <main class="card stage">
+      <div id="v-choose" class="view">
+        <div class="waitTitle">这一局几个人玩</div>
+        <div class="pickRow">
+          <button class="pick" data-n="2" type="button"><b>2</b><span>个人</span></button>
+          <button class="pick" data-n="3" type="button"><b>3</b><span>个人</span></button>
+          <button class="pick" data-n="4" type="button"><b>4</b><span>个人</span></button>
+        </div>
+        <p class="hint">你是第一个进来的，人数由你定。后面进来的人会自动跟着这个人数。</p>
+      </div>
+
       <div id="v-wait" class="view">
-        <div class="waitTitle">等对方进来</div>
+        <div class="waitTitle" id="waitTitle">等人进来</div>
         <div class="bigCode" id="waitCode">——</div>
-        <p class="hint">把这个口令发给对方，让他在自己设备上打开同一个网页，输入同一个口令。</p>
+        <p class="hint" id="waitHint">把这个口令发给朋友，凑齐人就开始。</p>
         <button class="primary" id="copyInvite" type="button">复制邀请</button>
+        <button class="linkBtn" id="takeHost" type="button">房主不在？我来定人数</button>
+      </div>
+
+      <div id="v-full" class="view">
+        <div class="waitTitle">这个房间已经满了</div>
+        <p class="hint" id="fullHint">这个口令里已经凑够人了。可能是别人用过这个口令，或者你换了设备。</p>
+        <button class="primary" id="rejoinBtn" type="button">挤进去</button>
+        <p class="hint">挤进去会把最久没动静的那位顶掉。</p>
       </div>
 
       <div id="v-input" class="view">
@@ -309,7 +374,7 @@
         <input id="wordInput" class="wordInput" type="text" maxlength="40" placeholder="一个词，或一句话" enterkeyhint="send" autocomplete="off" autocapitalize="off" spellcheck="false">
         <button class="primary" id="sendBtn" type="button">说出来</button>
         <p class="hint">标点、空格不影响比较；时间到就把框里的内容直接发出去。</p>
-        <p class="hint hot hidden" id="peerHint">对方已经说了，就差你。</p>
+        <p class="hint hot hidden" id="peerHint">已经有人说了，就差你。</p>
       </div>
 
       <div id="v-sent" class="view">
@@ -319,27 +384,16 @@
       </div>
 
       <div id="v-reveal" class="view">
-        <div class="verdict miss">没 撞 上</div>
-        <div class="pair">
-          <div class="side">
-            <div class="who">你</div>
-            <div class="w" id="rvMine"></div>
-            <div class="wn hidden" id="rvMineN"></div>
-          </div>
-          <div class="cross">×</div>
-          <div class="side">
-            <div class="who">对方</div>
-            <div class="w" id="rvTheirs"></div>
-            <div class="wn hidden" id="rvTheirsN"></div>
-          </div>
-        </div>
+        <div class="verdict miss" id="rvVerdict">没 撞 上</div>
+        <div class="trio" id="trio"></div>
         <button class="primary" id="nextBtn" type="button">继续</button>
-        <p class="hint center" id="rvHint">两边都点「继续」，才会开始下一轮的 30 秒。</p>
+        <p class="hint center" id="rvHint">所有人都点「继续」，才会开始下一轮的 30 秒。</p>
       </div>
 
       <div id="v-end" class="view">
         <div class="verdict hit">同 词 相 见</div>
         <div class="endWord" id="endWord">——</div>
+        <div id="endWho" class="endWho"></div>
         <div id="endNorm" class="hidden"></div>
         <div class="endMeta">第 <b id="endRound">1</b> 轮就对上了</div>
         <div class="endActs">
@@ -354,7 +408,6 @@
 
     <div id="historyWrap" class="card histWrap hidden">
       <div class="histTitle">说过的词</div>
-      <div class="histHead"><span>轮次</span><span>你</span><span>对方</span><span></span></div>
       <ol id="history" class="history"></ol>
     </div>
 
@@ -373,10 +426,11 @@
     <div class="kicker">规则</div>
     <h3>同词相见</h3>
     <ol>
+      <li>第一个进房间的人选人数：2、3 或 4 人。</li>
       <li>每轮 30 秒，各自写一个词；时间到就把框里的内容自动发出去。</li>
-      <li>两个人都发完才一起揭晓。去掉标点、空格后完全一样，就算撞上，这一局结束。</li>
-      <li>没撞上时，两边都要点「继续」，下一轮的 30 秒才开始。</li>
-      <li>空着超时会算作没写，永远不会跟对方撞上。</li>
+      <li>人齐了才一起揭晓。去掉标点、空格后，只要有两个人一样，就算撞上，这一局结束。</li>
+      <li>全都不一样时，所有人都要点「继续」，下一轮的 30 秒才开始。</li>
+      <li>空着超时会算作没写，永远不会跟别人撞上。</li>
     </ol>
     <button class="primary" id="modalClose" type="button">知道了</button>
   </div>
@@ -397,7 +451,7 @@
 
   /* ================= 常量 ================= */
   var HOSTS = ['https://ntfy.sh', 'https://ntfy.envs.net', 'https://ntfy.mzte.de'];
-  var TOPIC_ROOT = 'tongci7f3a';
+  var TOPIC_ROOT = 'tcmulti7f3a';
   var ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   var MAX_ROUNDS = 60;
 
@@ -455,12 +509,14 @@
     pendingWord: '',
     timerKey: '',
     deadline: 0,
-    autoFired: false
+    autoFired: false,
+    takeHost: false
   };
 
   /* ================= 核心：从消息流推导局面 ================= */
   function derive(log, myId) {
-    var players = {}, lastAt = {}, words = {}, ys = {}, match = 1, i, m, p, key;
+    var players = {}, firstAt = {}, lastAt = {}, words = {}, ys = {};
+    var match = 1, size = 0, hostId = null, i, m, p, key;
 
     for (i = 0; i < log.length; i++) {
       m = log[i];
@@ -468,62 +524,120 @@
       var okMR = typeof m.m === 'number' && typeof m.r === 'number' &&
                  m.m % 1 === 0 && m.r % 1 === 0 && m.m >= 1 && m.m <= 999 &&
                  m.r >= 1 && m.r <= MAX_ROUNDS;
+
       if (m.t === 'join' && typeof m.p === 'string' && typeof m.n === 'string') {
-        if (!players[m.p]) players[m.p] = m.n.slice(0, 12) || '玩家';
+        if (!players[m.p]) { players[m.p] = m.n.slice(0, 12) || '玩家'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
         lastAt[m.p] = i;
+        if (!hostId) hostId = m.p;
+      } else if (m.t === 'cfg' && typeof m.p === 'string' &&
+                 typeof m.n === 'number' && m.n >= 2 && m.n <= 4) {
+        if (!size) size = m.n;               // 第一条为准
+        if (!players[m.p]) { players[m.p] = '房主'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
+        lastAt[m.p] = i;
+        if (!hostId) hostId = m.p;
       } else if (m.t === 'w' && typeof m.p === 'string' && typeof m.w === 'string' && okMR) {
         words[m.m + '|' + m.r + '|' + m.p] = m.w.slice(0, 40);
-        if (!players[m.p]) { players[m.p] = '对方'; lastAt[m.p] = i; }
+        if (!players[m.p]) { players[m.p] = '玩家'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
+        lastAt[m.p] = i;
       } else if (m.t === 'y' && typeof m.p === 'string' && okMR) {
         ys[m.m + '|' + m.r + '|' + m.p] = 1;
-        if (!players[m.p]) { players[m.p] = '对方'; lastAt[m.p] = i; }
+        if (!players[m.p]) { players[m.p] = '玩家'; firstAt[m.p] = (typeof m.ts === 'number' ? m.ts : i); }
+        lastAt[m.p] = i;
       } else if (m.t === 'reset' && typeof m.m === 'number' && m.m % 1 === 0 && m.m >= 1 && m.m <= 999) {
         if (m.m > match) match = m.m;
       }
     }
 
-    var peerId = null;
-    for (p in lastAt) {
-      if (p === myId) continue;
-      if (!peerId || lastAt[p] > lastAt[peerId]) peerId = p;
+    // 座位上的人：最近活跃的前 N 个，按进房先后排
+    var ids = Object.keys(players);
+    var order = ids.slice().sort(function (a, b) { return lastAt[b] - lastAt[a]; });
+    var roster = size ? order.slice(0, size) : order.slice();
+    roster.sort(function (a, b) {
+      var d1 = (firstAt[a] || 0) - (firstAt[b] || 0);
+      if (d1 !== 0) return d1;
+      return a < b ? -1 : 1;
+    });
+
+    var inRoster = roster.indexOf(myId) > -1;
+    var cur = 1, rounds = [], done = false, r, ws, complete, pid, w, k;
+    var groups, keys, bestK, bestN;
+    if (roster.length && (!size || roster.length >= size)) {
+      for (r = 1; r <= MAX_ROUNDS; r++) {
+        ws = [];
+        complete = true;
+        for (i = 0; i < roster.length; i++) {
+          pid = roster[i];
+          w = words[match + '|' + r + '|' + pid];
+          if (w === undefined) { complete = false; break; }
+          ws.push({ pid: pid, name: players[pid] || '玩家', w: w });
+        }
+        if (!complete) break;
+
+        groups = {};
+        keys = [];
+        for (i = 0; i < ws.length; i++) {
+          k = norm(ws[i].w);
+          if (!k) continue;                 // 超时空的不参与配对
+          if (!groups[k]) { groups[k] = []; keys.push(k); }
+          groups[k].push(ws[i]);
+        }
+        bestK = null;
+        bestN = 0;
+        for (i = 0; i < keys.length; i++) {
+          if (groups[keys[i]].length > bestN) { bestN = groups[keys[i]].length; bestK = keys[i]; }
+        }
+        var same = bestN >= 2;
+        var extra = [];
+        if (same) {
+          for (i = 0; i < keys.length; i++) {
+            if (keys[i] !== bestK && groups[keys[i]].length >= 2) extra.push(groups[keys[i]]);
+          }
+        }
+        rounds.push({
+          r: r, words: ws, same: same, key: bestK,
+          winners: same ? groups[bestK] : [], extra: extra
+        });
+        if (same) { done = true; break; }
+      }
     }
 
-    var rounds = [], done = false, r, mine, theirs, same;
-    for (r = 1; r <= MAX_ROUNDS; r++) {
-      mine = words[match + '|' + r + '|' + myId];
-      theirs = peerId ? words[match + '|' + r + '|' + peerId] : undefined;
-      if (mine === undefined || theirs === undefined) break;
-      // 空字符串（超时没写）永远不算撞上
-      same = norm(mine) !== '' && norm(mine) === norm(theirs);
-      rounds.push({ r: r, mine: mine, theirs: theirs, same: same });
-      if (same) { done = true; break; }
-    }
+    cur = rounds.length + 1;
 
-    var cur = rounds.length + 1;
-    var myCur, peerCur;
+    var myCur, readyCount = 0;
     if (cur <= MAX_ROUNDS) {
       key = match + '|' + cur + '|';
       myCur = words[key + myId];
-      peerCur = peerId ? words[key + peerId] : undefined;
+      for (i = 0; i < roster.length; i++) if (ys[key + roster[i]]) readyCount++;
     }
+    var myReady = !!(cur <= MAX_ROUNDS && ys[match + '|' + cur + '|' + myId]);
+    var allReady = roster.length > 0 && readyCount === roster.length;
+    var active = (cur === 1) || allReady;
 
-    // 双方都点了「继续」，下一轮才开始；第 1 轮不用点
-    var myReady = !!ys[match + '|' + cur + '|' + myId];
-    var peerReady = peerId ? !!ys[match + '|' + cur + '|' + peerId] : false;
-    var active = (cur === 1) || (myReady && peerReady);
+    // 这一轮谁交了（结束后看最后一轮）
+    var subsRound = done && rounds.length ? rounds[rounds.length - 1].r : cur;
+    var subs = {};
+    if (subsRound <= MAX_ROUNDS) {
+      for (i = 0; i < roster.length; i++) {
+        if (words[match + '|' + subsRound + '|' + roster[i]] !== undefined) subs[roster[i]] = 1;
+      }
+    }
 
     return {
       match: match,
-      peerId: peerId,
-      peerName: peerId ? players[peerId] : '',
+      size: size,
+      hostId: hostId,
+      isHost: !!hostId && hostId === myId,
+      players: players,
+      roster: roster,
+      inRoster: inRoster,
       rounds: rounds,
       done: done,
       cur: cur,
       myCur: myCur,
-      peerCur: peerCur,
       myReady: myReady,
-      peerReady: peerReady,
+      readyCount: readyCount,
       active: active,
+      subs: subs,
       last: rounds.length ? rounds[rounds.length - 1] : null
     };
   }
@@ -734,7 +848,7 @@
   function showView(name) {
     var changed = S.view !== name;
     S.view = name;
-    var all = ['wait', 'input', 'sent', 'reveal', 'end'], i, v;
+    var all = ['choose', 'wait', 'full', 'input', 'sent', 'reveal', 'end'], i, v;
     for (i = 0; i < all.length; i++) {
       v = $('#v-' + all[i]);
       if (v) v.classList.toggle('on', all[i] === name);
@@ -747,20 +861,72 @@
     }
   }
 
+  function renderRoster(d) {
+    var box = $('#roster'), i, pid, el, b, s;
+    box.innerHTML = '';
+    var n = d.size || Math.max(d.roster.length, 1);
+    for (i = 0; i < n; i++) {
+      pid = d.roster[i];
+      el = document.createElement('div');
+      el.className = 'seat' + (pid && pid === S.me.id ? ' me' : '') + (pid ? '' : ' empty');
+      b = document.createElement('b');
+      b.textContent = pid ? (d.players[pid] || '玩家') : '空位';
+      s = document.createElement('span');
+      if (!pid) s.textContent = d.size ? ('还差 ' + (d.size - d.roster.length) + ' 人') : '等人';
+      else if (!d.size || d.roster.length < d.size) s.textContent = '在房间';
+      else if (d.subs[pid]) s.textContent = '已说';
+      else s.textContent = '在想';
+      if (pid && d.subs[pid]) el.className += ' done';
+      el.appendChild(b);
+      el.appendChild(s);
+      box.appendChild(el);
+    }
+  }
+
+  function renderTrio(d) {
+    var box = $('#trio'), i, x, cell, nm, w;
+    box.innerHTML = '';
+    var rows = d.last.words;
+    for (i = 0; i < rows.length; i++) {
+      x = rows[i];
+      cell = document.createElement('div');
+      cell.className = 'cell' + (d.last.key && norm(x.w) === d.last.key ? ' hit' : '');
+      nm = document.createElement('div');
+      nm.className = 'nm';
+      nm.textContent = x.name;
+      w = document.createElement('div');
+      w.className = 'w';
+      w.textContent = wordText(x.w);
+      cell.appendChild(nm);
+      cell.appendChild(w);
+      box.appendChild(cell);
+    }
+  }
+
   function renderHistory(d) {
-    var wrap = $('#historyWrap'), ol = $('#history'), i, x, li, a, b, c, e;
+    var wrap = $('#historyWrap'), ol = $('#history'), i, j, x, li, hd, row, sp, winPids;
     if (!d.rounds.length) { wrap.classList.add('hidden'); return; }
     wrap.classList.remove('hidden');
     ol.innerHTML = '';
     for (i = 0; i < d.rounds.length; i++) {
       x = d.rounds[i];
       li = document.createElement('li');
-      if (x.same) li.className = 'hit';
-      a = document.createElement('span'); a.className = 'hn'; a.textContent = '第' + x.r + '轮';
-      b = document.createElement('span'); b.className = 'hw'; b.textContent = wordText(x.mine);
-      c = document.createElement('span'); c.className = 'hw'; c.textContent = wordText(x.theirs);
-      e = document.createElement('span'); e.className = 'hm'; e.textContent = x.same ? '✓' : '✗';
-      li.appendChild(a); li.appendChild(b); li.appendChild(c); li.appendChild(e);
+      li.className = 'hblk';
+      hd = document.createElement('div');
+      hd.className = 'hn';
+      hd.textContent = '第 ' + x.r + ' 轮' + (x.same ? ' · 撞上了' : '');
+      li.appendChild(hd);
+      row = document.createElement('div');
+      row.className = 'hw2';
+      winPids = {};
+      for (j = 0; j < x.winners.length; j++) winPids[x.winners[j].pid] = 1;
+      for (j = 0; j < x.words.length; j++) {
+        sp = document.createElement('span');
+        if (winPids[x.words[j].pid]) sp.className = 'hit';
+        sp.textContent = x.words[j].name + ' ' + wordText(x.words[j].w);
+        row.appendChild(sp);
+      }
+      li.appendChild(row);
       ol.appendChild(li);
     }
   }
@@ -770,22 +936,17 @@
     var d = derive(S.log, S.me.id);
     S.d = d;
 
-    if (S.lastMatch && d.match !== S.lastMatch) toast('对方开了新的一局');
+    if (S.lastMatch && d.match !== S.lastMatch) toast('有人开了新的一局');
     S.lastMatch = d.match;
 
     $('#roomChip').textContent = '房间 ' + S.room;
-
-    var pc = $('#peerChip');
-    if (d.peerId) {
-      pc.textContent = d.peerName + ' 已加入';
-      pc.classList.remove('ghost');
-    } else {
-      pc.textContent = '等待对方';
-      pc.classList.add('ghost');
-    }
+    $('#seatChip').textContent = d.roster.length + ' / ' + (d.size || '?') + ' 人';
+    $('#seatChip').classList.toggle('ghost', !d.size);
 
     var view;
-    if (!d.peerId) view = 'wait';
+    if (!d.size) view = (d.isHost || S.takeHost) ? 'choose' : 'wait';
+    else if (!d.inRoster) view = 'full';
+    else if (d.roster.length < d.size) view = 'wait';
     else if (d.done) view = 'end';
     else if (!d.active) view = 'reveal';
     else if (d.myCur !== undefined) view = 'sent';
@@ -797,38 +958,89 @@
     if (view === 'input') ensureTimer(timerKey(S.room, d.match, d.cur));
 
     showView(view);
+    renderRoster(d);
+
+    var i, pid;
 
     if (view === 'wait') {
       $('#waitCode').textContent = S.room;
+      $('#waitTitle').textContent = d.size ? ('还差 ' + (d.size - d.roster.length) + ' 人') : '等人进来';
+      $('#waitHint').textContent = d.size
+        ? ('这一局 ' + d.size + ' 个人，把口令发给还差的人。')
+        : '把这个口令发给朋友，凑齐人就开始。';
+    } else if (view === 'full') {
+      $('#fullHint').textContent = '这个口令已经凑够 ' + d.size + ' 个人了。可能是别人用过这个口令，或者你换了设备。';
     } else if (view === 'input') {
       $('#iRound').textContent = String(d.cur);
-      $('#peerHint').classList.toggle('hidden', d.peerCur === undefined);
+      var others = 0;
+      for (var q in d.subs) if (q !== S.me.id) others++;
+      $('#peerHint').classList.toggle('hidden', others === 0);
+      if (others > 0) $('#peerHint').textContent = '已经有 ' + others + ' 个人说了，就差你。';
       if (S.pendingWord) { $('#wordInput').value = S.pendingWord; S.pendingWord = ''; }
       tick();
     } else if (view === 'sent') {
       $('#sentWord').textContent = wordText(d.myCur);
+      var left = [];
+      for (i = 0; i < d.roster.length; i++) {
+        pid = d.roster[i];
+        if (pid !== S.me.id && !d.subs[pid]) left.push(d.players[pid] || '玩家');
+      }
+      $('#sentTip').textContent = left.length ? ('还差 ' + left.join('、') + ' …') : '等大家…';
     } else if (view === 'reveal') {
-      fillWord($('#rvMine'), $('#rvMineN'), d.last.mine);
-      fillWord($('#rvTheirs'), $('#rvTheirsN'), d.last.theirs);
+      renderTrio(d);
       var btn = $('#nextBtn');
       btn.disabled = d.myReady;
-      btn.textContent = d.myReady ? '等对方点继续…' : ('继续 · 第 ' + d.cur + ' 轮');
+      btn.textContent = d.myReady
+        ? ('等其他人点继续 ' + d.readyCount + '/' + d.roster.length)
+        : ('继续 · 第 ' + d.cur + ' 轮');
       $('#rvHint').textContent = d.myReady
-        ? '你已经点了，等对方也点「继续」。'
-        : (d.peerReady ? '对方已经点了继续，就差你。' : '两边都点「继续」，才会开始下一轮的 30 秒。');
-      $('#rvHint').classList.toggle('hot', !d.myReady && d.peerReady);
+        ? ('已经点了 ' + d.readyCount + ' / ' + d.roster.length + '，等其他人。')
+        : (d.readyCount > 0
+            ? ('已经有 ' + d.readyCount + ' 个人点了继续，就差你。')
+            : '所有人都点「继续」，才会开始下一轮的 30 秒。');
+      $('#rvHint').classList.toggle('hot', !d.myReady && d.readyCount > 0);
     } else if (view === 'end') {
       var win = d.rounds[d.rounds.length - 1];
-      $('#endWord').textContent = norm(win.mine) || win.mine;
+      $('#endWord').textContent = win.key;
       $('#endRound').textContent = String(d.rounds.length);
-      var en = $('#endNorm');
-      if (win.theirs !== win.mine) {
-        en.textContent = '你写的是「' + win.mine + '」，对方写的是「' + win.theirs + '」';
-        en.classList.remove('hidden');
+
+      var who = $('#endWho');
+      who.textContent = '';
+      var b = document.createElement('b');
+      var names = [];
+      for (i = 0; i < win.winners.length; i++) names.push(win.winners[i].name);
+      if (names.length === d.roster.length && names.length >= 3) {
+        b.textContent = '所有人';
+        who.appendChild(b);
+        who.appendChild(document.createTextNode(' 都想到了一起'));
       } else {
-        en.textContent = '';
-        en.classList.add('hidden');
+        b.textContent = names.join(' 和 ');
+        who.appendChild(b);
+        who.appendChild(document.createTextNode(' 想到了一起'));
+        if (d.roster.length > names.length) {
+          var lone = [];
+          for (i = 0; i < win.words.length; i++) {
+            if (names.indexOf(win.words[i].name) < 0) lone.push(win.words[i].name);
+          }
+          if (lone.length) who.appendChild(document.createTextNode('，' + lone.join('、') + ' 落单'));
+        }
       }
+
+      var en = $('#endNorm');
+      var outs = [];
+      for (i = 0; i < win.winners.length; i++) {
+        if (win.winners[i].w !== win.key) outs.push(win.winners[i].name + '「' + win.winners[i].w + '」');
+      }
+      var extraTxt = '';
+      for (i = 0; i < win.extra.length; i++) {
+        var g = win.extra[i], ns = [];
+        for (var j = 0; j < g.length; j++) ns.push(g[j].name + '「' + g[j].w + '」');
+        extraTxt += (extraTxt ? '；' : '') + ns.join(' 和 ') + ' 也撞上了';
+      }
+      var line = outs.length ? ('原始写法：' + outs.join('，')) : '';
+      if (extraTxt) line += (line ? '　' : '') + extraTxt;
+      en.textContent = line;
+      en.classList.toggle('hidden', !line);
     }
 
     renderHistory(d);
@@ -957,31 +1169,34 @@
 
     g.textAlign = 'left';
     g.fillStyle = '#c2b5a1';
-    g.font = '400 25px ' + F_SANS;
+    g.font = '400 24px ' + F_SANS;
+
+    var cols = d.roster.length || 2;
+    var labelW = 150;
+    var gap = 18;
+    var cellW = (W - pad * 2 - labelW - gap * (cols - 1)) / cols;
+
     g.fillText('轮次', pad, 600);
-    g.fillText('你', pad + 180, 600);
-    g.fillText('对方', pad + 556, 600);
+    for (j = 0; j < cols; j++) {
+      g.fillText(fitText(g, d.players[d.roster[j]] || '', cellW), pad + labelW + j * (cellW + gap), 600);
+    }
 
     g.textBaseline = 'middle';
-    var i, it, y;
+    var i, j, it, y, cx;
     for (i = 0; i < rows; i++) {
       it = d.rounds[i];
       y = listTop + i * rowH + rowH / 2;
 
       g.fillStyle = '#b3a692';
-      g.font = '400 28px ' + F_SANS;
+      g.font = '400 26px ' + F_SANS;
       g.fillText('第' + it.r + '轮', pad, y);
 
-      g.fillStyle = it.same ? '#2f6b4f' : '#2a2521';
-      g.font = '400 38px ' + F_SERIF;
-      g.fillText(fitText(g, wordText(it.mine), 330), pad + 180, y);
-      g.fillText(fitText(g, wordText(it.theirs), 300), pad + 556, y);
-
-      g.textAlign = 'right';
-      g.fillStyle = it.same ? '#2f6b4f' : '#cdbfa8';
-      g.font = '400 30px ' + F_SANS;
-      g.fillText(it.same ? '✓' : '×', W - pad, y);
-      g.textAlign = 'left';
+      for (j = 0; j < it.words.length; j++) {
+        cx = pad + labelW + j * (cellW + gap);
+        g.fillStyle = (it.key && norm(it.words[j].w) === it.key) ? '#2f6b4f' : '#2a2521';
+        g.font = '400 32px ' + F_SERIF;
+        g.fillText(fitText(g, wordText(it.words[j].w), cellW), cx, y);
+      }
     }
 
     g.textBaseline = 'alphabetic';
@@ -990,7 +1205,7 @@
     g.fillText('房间 ' + S.room + ' · ' + stamp(), pad, H - 120);
     g.fillStyle = '#c9bda8';
     g.font = '400 22px ' + F_SANS;
-    g.fillText('同词相见 · 两个人在同一分钟想到了一起', pad, H - 78);
+    g.fillText('同词相见 · ' + cols + ' 个人，有人想到了一起', pad, H - 78);
 
     return cv;
   }
@@ -1032,7 +1247,7 @@
 
   function submitWord(raw, auto) {
     var d = S.d;
-    if (!d || !d.peerId) return;
+    if (!d || !d.size || !d.inRoster) return;
     if (d.myCur !== undefined) return;
     var text = (raw == null ? ($('#wordInput').value || '') : String(raw)).trim();
     if (!auto) {
@@ -1064,6 +1279,7 @@
     S.timerKey = '';
     S.deadline = 0;
     S.autoFired = false;
+    S.takeHost = false;
     $('#gate').classList.add('hidden');
     $('#room').classList.remove('hidden');
     LS.set('tcy_name', name);
@@ -1145,15 +1361,36 @@
 
     $('#nextBtn').addEventListener('click', function () {
       var d = S.d;
-      if (!d || !d.peerId || d.myReady) return;
+      if (!d || !d.size || !d.inRoster || d.myReady) return;
       send({ t: 'y', m: d.match, r: d.cur });
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('#v-choose .pick'), function (btn) {
+      btn.addEventListener('click', function () {
+        var n = Number(btn.getAttribute('data-n'));
+        if (n >= 2 && n <= 4) {
+          S.takeHost = false;
+          send({ t: 'cfg', n: n });
+        }
+      });
+    });
+
+    $('#takeHost').addEventListener('click', function () {
+      S.takeHost = true;
+      render();
+    });
+
+    $('#rejoinBtn').addEventListener('click', function () {
+      send({ t: 'join', n: S.me.name || '玩家' });
+      toast('再试一次，挤进去了');
     });
 
     setInterval(tick, 200);
 
     $('#copyInvite').addEventListener('click', function () {
       copyText('同词相见 · 房间口令：' + S.room +
-        '\n打开同一个网页，输入这个口令，我们就能对上。');
+        (S.d && S.d.size ? ('（已定 ' + S.d.size + ' 人）') : '') +
+        '\n打开同一个网页，输入这个口令，我们就进同一个房间。');
     });
 
     $('#saveCard').addEventListener('click', saveCard);
@@ -1166,10 +1403,13 @@
 
     $('#copyResult').addEventListener('click', function () {
       var d = S.d;
-      if (!d) return;
-      var lines = ['同词相见 · 第 ' + d.rounds.length + ' 轮撞上了「' + wordText(d.rounds[d.rounds.length - 1].mine) + '」'];
+      if (!d || !d.rounds.length) return;
+      var last = d.rounds[d.rounds.length - 1];
+      var lines = ['同词相见 · ' + d.size + ' 人 · 第 ' + d.rounds.length + ' 轮撞上了「' + last.key + '」'];
       d.rounds.forEach(function (x) {
-        lines.push('第' + x.r + '轮：' + wordText(x.mine) + ' / ' + wordText(x.theirs) + (x.same ? ' ✓' : ''));
+        var parts = [];
+        for (var i = 0; i < x.words.length; i++) parts.push(x.words[i].name + ' ' + wordText(x.words[i].w));
+        lines.push('第' + x.r + '轮：' + parts.join(' / ') + (x.same ? ' ✓' : ''));
       });
       copyText(lines.join('\n'));
     });
