@@ -1124,8 +1124,9 @@
 
   function drawCard(d) {
     var rows = d.rounds.length;
-    var W = 1080, pad = 84, rowH = 78, listTop = 648;
-    var H = listTop + rows * rowH + 210;
+    var W = 1080, pad = 84, rowH = 78, listTop = 664;
+    var H = listTop + rows * rowH + 200;
+    var cols = d.roster.length || 2;
     var cv = document.createElement('canvas');
     cv.width = W;
     cv.height = H;
@@ -1144,41 +1145,55 @@
     g.textAlign = 'left';
     g.fillStyle = '#a8987f';
     g.font = '400 27px ' + F_SANS;
-    g.fillText('1 对 1 · 默契复盘', pad, 150);
+    g.fillText(cols + ' 人 · 默契复盘', pad, 148);
 
     g.fillStyle = '#2a2521';
     g.font = '600 78px ' + F_SERIF;
-    g.fillText('同词相见', pad, 250);
+    g.fillText('同词相见', pad, 246);
 
     var win = d.rounds[rows - 1];
-    var heroText = norm(win.mine) || win.mine;
+    var heroText = win.key || '';
     g.textAlign = 'center';
     g.fillStyle = '#2f6b4f';
-    g.fillText(heroFit(g, heroText, W - pad * 2, 112, 56), W / 2, 415);
+    g.fillText(heroFit(g, heroText, W - pad * 2, 112, 56), W / 2, 400);
+
+    // 谁和谁撞上了（写名字）
+    var names = [];
+    for (var q = 0; q < (win.winners || []).length; q++) names.push(win.winners[q].name);
+    var whoTxt = '';
+    if (names.length) {
+      whoTxt = (names.length === cols && cols >= 3)
+        ? (names.join('、') + ' 都想到了一起')
+        : (names.join(' 和 ') + ' 想到了一起');
+    }
+    g.fillStyle = '#6f6558';
+    g.font = '400 30px ' + F_SANS;
+    g.fillText(fitText(g, whoTxt, W - pad * 2), W / 2, 456);
 
     g.fillStyle = '#8b8072';
-    g.font = '400 32px ' + F_SANS;
-    g.fillText('第 ' + rows + ' 轮就对上了', W / 2, 482);
+    g.font = '400 31px ' + F_SANS;
+    g.fillText('第 ' + rows + ' 轮就对上了', W / 2, 510);
 
     g.strokeStyle = '#efe4d2';
     g.lineWidth = 2;
     g.beginPath();
-    g.moveTo(pad, 540);
-    g.lineTo(W - pad, 540);
+    g.moveTo(pad, 556);
+    g.lineTo(W - pad, 556);
     g.stroke();
 
     g.textAlign = 'left';
-    g.fillStyle = '#c2b5a1';
     g.font = '400 24px ' + F_SANS;
 
-    var cols = d.roster.length || 2;
     var labelW = 150;
     var gap = 18;
     var cellW = (W - pad * 2 - labelW - gap * (cols - 1)) / cols;
 
-    g.fillText('轮次', pad, 600);
+    g.fillStyle = '#c2b5a1';
+    g.fillText('轮次', pad, 616);
+    g.fillStyle = '#6f6558';
+    g.font = '500 25px ' + F_SANS;
     for (j = 0; j < cols; j++) {
-      g.fillText(fitText(g, d.players[d.roster[j]] || '', cellW), pad + labelW + j * (cellW + gap), 600);
+      g.fillText(fitText(g, d.players[d.roster[j]] || '', cellW), pad + labelW + j * (cellW + gap), 616);
     }
 
     g.textBaseline = 'middle';
